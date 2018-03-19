@@ -1,0 +1,9 @@
+{
+  "name": "internJs",
+  "version": "1.0.0",
+  "author": "Andrey Kulebyakin",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "3.x.x"
+  }
+}
