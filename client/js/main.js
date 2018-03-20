@@ -57,15 +57,29 @@ window.onload = function(){
         //перебираем возможные углы поворота шаблона
         for (var angle = 0; angle<=360; angle+=angleStep){
             //поворачиваем шаблон
-            template.map((value) => {
-                return {"beg": value+angleStep, "end": value+angleStep};
+            template = template1.map((value) => {
+                return {"beg": value.beg+angle, "end": value.end+angle};
             })
             //считаем сумму растояний пикслей до ближайщей границы нового шаблона
-            var sum = dataHSL.reduce((pixel) => {
-                return minBorderDistance(pixel, template)
-            });
+            console.log(dataHSL[0]);
+
+            var sum = dataHSL.reduce((sum, pixel) => {
+                //console.log(sum);
+                return sum + minBorderDistance(pixel, template)
+            }, 0);
+
+            // dataHSL.forEach((pixel) => {
+            //     //console.log(sum);
+            //     console.log(minBorderDistance(pixel, template));
+            // });
+            
             //если сумма стала меньше, чем для предыдущих шаблонов - запоминаем этот шаблон
-            if (minSumDistance - sum) bestAngle = angle;
+            // console.log("minSumDistance: " + minSumDistance);
+            // console.log("sum: " + sum);
+            if (minSumDistance > sum) {
+                bestAngle = angle;
+                //console.log(angle);
+            }
             minSumDistance = Math.min(minSumDistance, sum);
         }
 
