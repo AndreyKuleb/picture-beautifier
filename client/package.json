@@ -1,0 +1,20 @@
+{
+  "name": "picture-beautifier",
+  "version": "1.0.0",
+  "author": "Andrey Kulebyakin",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "3.x.x"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "colorsys": "^1.0.20",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
+  },
+  "scripts": {
+    "start": "webpack"
+  }
+}
