@@ -3,14 +3,22 @@ var gaussian = require('gaussian');
 
 const gausMean = 0;
 const gausVariance = 0.2;
+// const template_base1 = [{
+//     beg: 0,
+//     end: 94
+// }, {
+//     beg: 180,
+//     end: 274
+// }];
+const template_base1_halfwidth = 20;
 const template_base1 = [{
     beg: 0,
-    end: 94
+    end: 40
 }, {
     beg: 180,
-    end: 274
+    end: 240
 }];
-const template_base1_halfwidth = 47;
+// const template_base1_halfwidth = 47;
 const angleStep = 10;
 
 /* 
@@ -96,8 +104,9 @@ function minBorderDistance(pixel, template) {
 function getNewdataHSL(dataHSL, template, bestAngle) {
     var newDataHSL = dataHSL;
     newDataHSL = newDataHSL.map((pixel) => {
-        //console.log(minBorderDistance(pixel, template).distance);
+        //console.log(pixel);
         if (pixel.distance != 0) {
+            //console.log("pixel.distance > 0");
             var truePixel;
             if (Math.abs(pixel.h - pixel.border) < Math.abs(pixel.h + 360 - pixel.border)) {
                 truePixel = pixel;
@@ -109,17 +118,18 @@ function getNewdataHSL(dataHSL, template, bestAngle) {
             if (truePixel.h > truePixel.border) {
                 truePixel.h = (truePixel.border - template_base1_halfwidth) +
                     template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.h - truePixel.border));
-                    console.log((truePixel.border - template_base1_halfwidth) + template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.h - truePixel.border)));
+                    //console.log((truePixel.border - template_base1_halfwidth) + template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.h - truePixel.border)));
             } else {
                 truePixel.h = (truePixel.border + template_base1_halfwidth) -
                     template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.border - truePixel.h));
-                console.log(truePixel.h = (truePixel.border + template_base1_halfwidth) - template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.border - truePixel.h)));
+               // console.log(truePixel.h = (truePixel.border + template_base1_halfwidth) - template_base1_halfwidth * (1 - gaussian(gausMean, gausVariance).pdf(truePixel.border - truePixel.h)));
             }
             //console.log(truePixel.border);
             //console.log(truePixel.h);
             
             return truePixel;
         }
+        else return pixel;
     });
     return newDataHSL;
 }
@@ -224,19 +234,30 @@ window.onload = function () {
         // });
 
         var applyColor = function () {
-            for (var i = 0; i < data.length; i += 4) {
+            var i = 0;
+            newdataHSL.forEach((pixel) => {
+                //console.log(pixel);
+                if (pixel.h > 360) pixel.h-=360;
                 tempRGB = colorsys.hslToRgb({
-                    "h": newdataHSL[i].h,
-                    "s": newdataHSL[i + 1].s,
-                    "l": newdataHSL[i + 2].l
+                    "h": pixel.h,
+                    "s": pixel.s,
+                    "l": pixel.l
                 });
+                // console.log(tempRGB.r);
+                // console.log(data[i]);
+                // console.log(tempRGB.g);
+                // console.log(data[i+1]);
+                // console.log(tempRGB.b);
+                // console.log(data[i+2]);
                 //console.log(colorsys.rotateHue(200, 200));
                 data[i] = tempRGB.r //data[i];     // red
                 data[i + 1] = tempRGB.g //data[i + 1]; // green
                 data[i + 2] = tempRGB.b //data[i + 2]; // blue
-            }
+                i+=4;
+            });
             //img.style.display = '';
             ctx.putImageData(imageData, 0, 0);
+            console.log("Программа выполнена успешно!");
         };
         var invert = function () {
             for (var i = 0; i < data.length; i += 4) {
@@ -258,6 +279,7 @@ window.onload = function () {
             }
             //img.style.display = '';
             ctx.putImageData(imageData, 0, 0);
+            console.log("Программа выполнена успешно!");
         };
         applyColor();
         //invert(); 
