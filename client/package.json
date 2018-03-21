@@ -4,7 +4,8 @@
   "author": "Andrey Kulebyakin",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "3.x.x"
+    "express": "3.x.x",
+    "gaussian": "^1.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
