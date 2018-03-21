@@ -56,6 +56,21 @@ function minBorderDistance(pixel, template){
     }, {"distance": 1000, "border": 0})
 }
 
+// function getNewdataHSL(dataHSL, template, bestAngle){
+//     var newDataHSL = dataHSL;
+//     newDataHSL = newDataHSL.map((pixel) => {
+//         //console.log(minBorderDistance(pixel, template).distance);
+//         pixel.
+//         return pixel;
+//     }, 0);
+// }
+
+function templateRotate(template, angle){
+    return template.map((value) => {
+        return {"beg": value.beg+angle, "end": value.end+angle};
+    })
+}
+
 window.onload = function(){
     draw();
 
@@ -86,9 +101,11 @@ window.onload = function(){
         //перебираем возможные углы поворота шаблона
         for (var angle = 0; angle<=360; angle+=angleStep){
             //поворачиваем шаблон
-            template = template1.map((value) => {
-                return {"beg": value.beg+angle, "end": value.end+angle};
-            })
+            // template = template1.map((value) => {
+            //     return {"beg": value.beg+angle, "end": value.end+angle};
+            // })
+
+            template = templateRotate(template1, angle);
             //считаем сумму растояний пикслей до ближайщей границы нового шаблона
             //console.log(dataHSL[0]);
 
@@ -112,10 +129,13 @@ window.onload = function(){
             minSumDistance = Math.min(minSumDistance, sum);
         }
 
-        template = template1.map((value) => {
-            return {"beg": value.beg+bestAngle, "end": value.end+bestAngle};
-        })
+        //получем секции идеального шаблона
+        // template = template1.map((value) => {
+        //     return {"beg": value.beg+bestAngle, "end": value.end+bestAngle};
+        // })
+        template = templateRotate(template1, angle);
 
+        //получаем ближайщие границы для пикселей
         dataHSL = dataHSL.map((pixel) => {
             //console.log(minBorderDistance(pixel, template).distance);
             var data = minBorderDistance(pixel, template);
@@ -124,13 +144,14 @@ window.onload = function(){
             return pixel;
         }, 0);
 
-        dataHSL.forEach((i) => {
-            console.log(i.border);
-        });
+        // dataHSL.forEach((i) => {
+        //     console.log(i.border);
+        // });
 
         console.log(bestAngle);
         //console.log(minBorderDistance({ "h": 50}, template1));
 
+        //var newdataHSL = getNewdataHSL(dataHSL);
         var invert = function() {
             for (var i = 0; i < data.length; i += 4) {
             tempHSL = colorsys.rgb_to_hsl({ r: data[i], g: data[i + 1], b: data[i + 2] });
