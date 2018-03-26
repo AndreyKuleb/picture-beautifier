@@ -2,7 +2,7 @@
 Программа для дипломной работы, посвященной web реализации алгоритма нормализации изображения
 ## Об алгоритме
 Алгоритм предназначен для нормализации изображений на основе цветовых шаблонов Мацуды (Yutaka Matsuda).
-![Цветовые шаблоны Matsuda](https://picasaweb.google.com/105449008872404933188/6537337339490913121#6537337339836391330 "Matsuda Color Remplates")
+![Цветовые шаблоны Matsuda](https://github.com/AndreyKuleb/picture-beautifier/blob/master/results/Matsuda.JPG)
 
 Описание алгоритма приведено в статье:
 [Daniel Cohen_-Or. Olga Sorkine. Color Harmonization, 2006](https://igl.ethz.ch/projects/color-harmonization/harmonization.pdf)
@@ -21,4 +21,4 @@
 `npm start`
 
 ## Результаты работы алгоритма
-![](https://picasaweb.google.com/105449008872404933188/6537336954633793777#6537336958999473858 "Algorithm result")
+![](https://github.com/AndreyKuleb/picture-beautifier/blob/master/results/small7.JPG)
