@@ -3,13 +3,7 @@ var gaussian = require('gaussian');
 
 const gausMean = 0;
 const gausVariance = 0.2;
-// const template_base1 = [{
-//     beg: 0,
-//     end: 94
-// }, {
-//     beg: 180,
-//     end: 274
-// }];
+
 const template_base1_halfwidth = 20;
 const template_base1 = [{
     beg: 0,
@@ -45,6 +39,8 @@ const angleStep = 10;
 //                      );
 //     }, 1000);
 // }
+
+//Возвращает пиксель с минимальным размером дистанции до ближайщей границы
 function distanceMin() {
     var minDistance = {
         "distance": 1000,
@@ -58,6 +54,7 @@ function distanceMin() {
     return minDistance;
 }
 
+//Возвращает объет данных с ближайшей для пикселя границей и расстоянием до неё
 function minBorderDistance(pixel, template) {
     return template.reduce((inf, section) => {
         //если пиксель уже внутри границ, то продолжаем возвращать -1
@@ -101,6 +98,7 @@ function minBorderDistance(pixel, template) {
     })
 }
 
+//Возвращает массив пикселей с новыми значениями h
 function getNewdataHSL(dataHSL, template, bestAngle) {
     var newDataHSL = dataHSL;
     newDataHSL = newDataHSL.map((pixel) => {
@@ -134,6 +132,7 @@ function getNewdataHSL(dataHSL, template, bestAngle) {
     return newDataHSL;
 }
 
+//Поворачивает шаблон на указанный угол
 function templateRotate(template_base, angle) {
     return template_base.map((value) => {
         return {
@@ -143,49 +142,56 @@ function templateRotate(template_base, angle) {
     })
 }
 
+function getImageDataFromDocumentImage(){
+    var img = document.getElementsByTagName("img")[0];
+    img.crossOrigin = "Anonymous";
+    img.setAttribute('crossOrigin', '')
+    //console.log(img);
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    //img.style.display = 'none';
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    return imageData;
+}
+
+function dataRGBToHSL(data){
+    var dataHSL = [];
+    for (var i = 0; i < data.length; i += 4) {
+        dataHSL.push(colorsys.rgb_to_hsl({
+            r: data[i],
+            g: data[i + 1],
+            b: data[i + 2]
+        }));
+    };
+    return dataHSL;
+}
+
+//главная функция программы
 window.onload = function () {
     draw();
 
     function draw() {
-        var img = document.getElementsByTagName("img")[0];
-        img.crossOrigin = "Anonymous";
-        img.setAttribute('crossOrigin', '')
-        //console.log(img);
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        //img.style.display = 'none';
-
-        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var imageData = getImageDataFromDocumentImage();
         var data = imageData.data;
         var tempHSL, tempRGB;
         //console.log(data.length);
-        var dataHSL = [];
-        for (var i = 0; i < data.length; i += 4) {
-            dataHSL.push(colorsys.rgb_to_hsl({
-                r: data[i],
-                g: data[i + 1],
-                b: data[i + 2]
-            }));
-        };
-
+        
+        var dataHSL = dataRGBToHSL(data);
         var template = template_base1;
         var minSumDistance = Infinity;
         var bestAngle = 0;
         //перебираем возможные углы поворота шаблона
         for (var angle = 0; angle <= 360; angle += angleStep) {
+            
             //поворачиваем шаблон
-            // template = template1.map((value) => {
-            //     return {"beg": value.beg+angle, "end": value.end+angle};
-            // })
-
             template = templateRotate(template_base1, angle);
-            //считаем сумму растояний пикслей до ближайщей границы нового шаблона
+
             //console.log(dataHSL[0]);
 
-
+            //считаем сумму растояний пикслей до ближайщей границы нового шаблона
             var sum = dataHSL.reduce((sum, pixel) => {
                 //console.log(sum);
                 return sum + minBorderDistance(pixel, template).distance;
@@ -255,33 +261,14 @@ window.onload = function () {
                 data[i + 2] = tempRGB.b //data[i + 2]; // blue
                 i+=4;
             });
-            //img.style.display = '';
+
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
             ctx.putImageData(imageData, 0, 0);
             console.log("Программа выполнена успешно!");
         };
-        var invert = function () {
-            for (var i = 0; i < data.length; i += 4) {
-                tempHSL = colorsys.rgb_to_hsl({
-                    r: data[i],
-                    g: data[i + 1],
-                    b: data[i + 2]
-                });
-                //console.log(tempHSL);
-                tempRGB = colorsys.hslToRgb({
-                    h: tempHSL.h,
-                    s: tempHSL.s,
-                    l: tempHSL.l
-                });
-                //console.log(colorsys.rotateHue(200, 200));
-                data[i] = 256 - tempRGB.r //data[i];     // red
-                data[i + 1] = 256 - tempRGB.g //data[i + 1]; // green
-                data[i + 2] = 256 - tempRGB.b //data[i + 2]; // blue
-            }
-            //img.style.display = '';
-            ctx.putImageData(imageData, 0, 0);
-            console.log("Программа выполнена успешно!");
-        };
+        
         applyColor();
-        //invert(); 
+
     }
 }
