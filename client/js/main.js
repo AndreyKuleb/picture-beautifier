@@ -19,26 +19,6 @@ const angleStep = 10;
     result -1 - внутри границы;
     result >=0 - вне границы;
 */
-// function minBorderDistance(pixel, template){
-//     return template.reduce((distance, section)=>{
-//         //если пиксель уже внутри границ, то продолжаем возвращать -1
-//         if (distance == 0) return 0;
-//         //если пиксель стал внутри границ, начинаем возвращать -1
-//         if ((section.beg < pixel.h) && (section.end > pixel.h)){
-//             return 0;
-//         }
-//         if ((section.beg < (pixel.h + 360)) && (section.end > (pixel.h + 360))){
-//             return 0;
-//         }
-//         //иначе возвращаем минимальное значение между границами и предыдущим вычисленным значением
-//         return Math.min(Math.abs(pixel.h - section.beg),
-//                         Math.abs(pixel.h - section.end),
-//                         Math.abs((pixel.h + 360) - section.beg),
-//                         Math.abs((pixel.h + 360) - section.end),
-//                         distance
-//                      );
-//     }, 1000);
-// }
 
 //Возвращает пиксель с минимальным размером дистанции до ближайщей границы
 function distanceMin() {
@@ -272,3 +252,5 @@ window.onload = function () {
 
     }
 }
+
+export {distanceMin, minBorderDistance, dataRGBToHSL, templateRotate, getNewdataHSL}
